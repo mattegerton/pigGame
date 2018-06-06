@@ -10,71 +10,64 @@ GAME RULES:
 */
 
 
-let scores, roundScore, activePlayer;
+let scores, roundScore, activePlayer, gamePlaying;
 
-scores = [0,0]; // Counts total score.
-roundScore = 0; // Counts round score.
-activePlayer = 0; // Active player 0-1.
-
-
-// Hide the dice when page loads.
-document.querySelector('.dice').style.display = 'none';
-
-// Set elements score/current to 0.
-document.getElementById('score-0').textContent = '0';
-document.getElementById('score-1').textContent = '0';
-document.getElementById('current-0').textContent = '0';
-document.getElementById('current-1').textContent = '0';
-
-function btn () {
-    //Do something here.
-};
+newGame();
 
 document.querySelector('.btn-roll').addEventListener('click', function () {
-    
-    // 1. Produce a random number.
-    let dice = Math.floor(Math.random() * 6) + 1;
+    if (gamePlaying) {
+        // 1. Produce a random number.
+        let dice = Math.floor(Math.random() * 6) + 1;
 
-    // 2. Display result.
-    let diceDOM = document.querySelector('.dice')
-    diceDOM.style.display = 'block';
-    diceDOM.src = 'dice-' + dice + '.png';
+        // 2. Display result.
+        let diceDOM = document.querySelector('.dice')
+        diceDOM.style.display = 'block';
+        diceDOM.src = 'dice-' + dice + '.png';
 
-    // 3. Display round result only if number is not a 1.
-    if (dice !== 1) {
-        // Add score.
-        roundScore += dice;
-        document.querySelector('#current-' + activePlayer).textContent = roundScore;
-    } else {
-        // Next player using Ternary Operator.
-        nextPlayer();
+        // 3. Display round result only if number is not a 1.
+        if (dice !== 1) {
+            // Add score.
+            roundScore += dice;
+            document.querySelector('#current-' + activePlayer).textContent = roundScore;
+        } else {
+            // Next player using Ternary Operator.
+            nextPlayer();
+        }
     }
-
 } );
 
 document.querySelector('.btn-hold').addEventListener('click', function () {
-    // 1. Add current score to players global score.
-    scores[activePlayer] += roundScore;
+    if (gamePlaying) {
+        // 1. Add current score to players global score.
+        scores[activePlayer] += roundScore;
 
-    // 2. Update the UI.
-    document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
+        // 2. Update the UI.
+        document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
 
-    // 3. Check if player won the game.
-    if (scores[activePlayer] >= 5) {
-        document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
-        document.querySelector('.dice').style.display = 'none';
-        document.querySelector('.player-' + activePlayer + '-panel').classList.toggle('winner');
-        document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
-    } else {
-        nextPlayer();
-    }
+        // 3. Check if player won the game.
+        if (scores[activePlayer] >= 5) {
+            document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
+            document.querySelector('.dice').style.display = 'none';
+            document.querySelector('.player-' + activePlayer + '-panel').classList.toggle('winner');
+            document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
+            gamePlaying = false;
+        } else {
+            nextPlayer();
+        }
+    } 
 });
 
-
+// Reset scores and styles once New Game button is clicked.
 document.querySelector('.btn-new').addEventListener('click', newGame);
 
 
+// Reset function.
 function newGame () {
+    scores = [0.0];
+    roundScore = 0;
+    activePlayer = 0;
+    gamePlaying = true;
+
     // Hide the dice when page loads.
     document.querySelector('.dice').style.display = 'none';
 
@@ -87,12 +80,15 @@ function newGame () {
     // Remove winner class and reset names.
     document.querySelector('.player-0-panel').classList.remove('winner');
     document.querySelector('.player-1-panel').classList.remove('winner');
+    document.querySelector('.player-0-panel').classList.remove('active');
+    document.querySelector('.player-1-panel').classList.remove('active');
+    document.querySelector('.player-0-panel').classList.add('active');
     document.querySelector('#name-0').textContent = 'Player 1';
     document.querySelector('#name-1').textContent = 'Player 2';
 };
 
 
-
+// Next player function.
 function nextPlayer () {
     activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
     roundScore = 0;
