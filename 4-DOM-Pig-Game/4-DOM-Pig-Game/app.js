@@ -12,7 +12,7 @@ GAME RULES:
 
 let scores, roundScore, activePlayer;
 
-score = [0,0]; // Counts total score.
+scores = [0,0]; // Counts total score.
 roundScore = 0; // Counts round score.
 activePlayer = 0; // Active player 0-1.
 
@@ -47,22 +47,67 @@ document.querySelector('.btn-roll').addEventListener('click', function () {
         document.querySelector('#current-' + activePlayer).textContent = roundScore;
     } else {
         // Next player using Ternary Operator.
-        activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
-        roundScore = 0;
-
-        document.getElementById('current-0').textContent = '0';
-        document.getElementById('current-1').textContent = '0';
-
-        document.querySelector('.player-0-panel').classList.toggle('active');
-        document.querySelector('.player-1-panel').classList.toggle('active');
-
-        //document.querySelector('.player-0-panel').classList.remove('active');
-        //document.querySelector('.player-1-panel').classList.add('active');
+        nextPlayer();
     }
 
 } );
 
+document.querySelector('.btn-hold').addEventListener('click', function () {
+    // 1. Add current score to players global score.
+    scores[activePlayer] += roundScore;
 
+    // 2. Update the UI.
+    document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
+
+    // 3. Check if player won the game.
+    if (scores[activePlayer] >= 5) {
+        document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
+        document.querySelector('.dice').style.display = 'none';
+        document.querySelector('.player-' + activePlayer + '-panel').classList.toggle('winner');
+        document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
+    } else {
+        nextPlayer();
+    }
+});
+
+
+document.querySelector('.btn-new').addEventListener('click', newGame);
+
+
+function newGame () {
+    // Hide the dice when page loads.
+    document.querySelector('.dice').style.display = 'none';
+
+    // Set elements score/current to 0.
+    document.getElementById('score-0').textContent = '0';
+    document.getElementById('score-1').textContent = '0';
+    document.getElementById('current-0').textContent = '0';
+    document.getElementById('current-1').textContent = '0';
+
+    // Remove winner class and reset names.
+    document.querySelector('.player-0-panel').classList.remove('winner');
+    document.querySelector('.player-1-panel').classList.remove('winner');
+    document.querySelector('#name-0').textContent = 'Player 1';
+    document.querySelector('#name-1').textContent = 'Player 2';
+};
+
+
+
+function nextPlayer () {
+    activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
+    roundScore = 0;
+
+    document.getElementById('current-0').textContent = '0';
+    document.getElementById('current-1').textContent = '0';
+
+    document.querySelector('.player-0-panel').classList.toggle('active');
+    document.querySelector('.player-1-panel').classList.toggle('active');
+
+    //document.querySelector('.player-0-panel').classList.remove('active');
+    //document.querySelector('.player-1-panel').classList.add('active');
+
+    document.querySelector('.dice').style.display = 'none';
+}
 
 
 
